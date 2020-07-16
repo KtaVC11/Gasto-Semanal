@@ -28,6 +28,15 @@ class App extends Component {
     gastos: {}
 
   }
+  //la idea es tener este didmount sin mucho codigo
+  componentDidMount() {
+    this.obtenerPresupuesto();
+  }
+
+  obtenerPresupuesto = () => {
+    let presupuesto = prompt('Cual es el presupuesto?');
+    console.log(presupuesto);
+  }
 
   //funcion que carga los datos al formulario
   //agregar un nuevo gasto el state
