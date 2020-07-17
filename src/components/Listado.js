@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Gasto from './Gasto';
+import PropTypes from 'prop-types';
 //Object keys para iterar un objeto, con map se accede al objeto
 //gasto={this.props.gastos[key]} aqui el key hace que se cree un objeto nuevo, con su info actualizada cada vez que se ingresa informacion
 //key={key}, asi guarda la referencia
@@ -7,7 +8,7 @@ import Gasto from './Gasto';
 class Listado extends Component {
     render() {
         return (
-            <div className="gastos-realizados">
+            <div className="gastos-realizados" >
                 <h2>Listado</h2>
 
                 {Object.keys(this.props.gastos).map(key => (
@@ -21,5 +22,8 @@ class Listado extends Component {
 
         )
     }
+}
+Listado.propTypes = {
+    gastos: PropTypes.object.isRequired
 }
 export default Listado;

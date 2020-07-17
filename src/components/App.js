@@ -3,6 +3,9 @@ import '../css/App.css';
 import Header from './Header';
 import Formulario from './Formulario';
 import Listado from './Listado';
+import { validarPresupuesto } from '../helper';
+import ControlPresupuesto from './ControlPresupuesto';
+
 ///********************************************************************************************/
 //la idea del proyecto es que se leen los gastos, se envian al state a la aplicacion principal
 // y esa app principal los reparte hacia listado, en listado se comunica con gastos
@@ -13,11 +16,15 @@ import Listado from './Listado';
 // y se vuelven a pasar a un hijo
 //***********************************************************************************************/
 
-
-
+//*********************************************************************************************************************/
 //los props solo se envian del padre al hijo
 //se pued enviar una funcion del padre al hijo, pero pueden fluir los datos de ambas formas con una funcion
 //desde del componente padre se crea una funcion que se encarga de cargar todo en el state, pasa eso al formulario
+//*********************************************************************************************************************/
+
+//el state mete los datos entre comillas
+
+//con proptypes se puede  documentar que tipo de datos deben reciben los componentes
 class App extends Component {
   //en un formulario se pueden enviar props o states
 
@@ -35,7 +42,15 @@ class App extends Component {
 
   obtenerPresupuesto = () => {
     let presupuesto = prompt('Cual es el presupuesto?');
-    console.log(presupuesto);
+    let resultado = validarPresupuesto(presupuesto);
+    if (resultado) {
+      this.setState({
+        presupuesto: presupuesto,
+        restante: presupuesto
+      })
+    } else {
+      this.obtenerPresupuesto();//si el presupuesto no es valido que siga ejecutando la funcion hasta que lo sea
+    }
   }
 
   //funcion que carga los datos al formulario
@@ -49,12 +64,35 @@ class App extends Component {
 
     //2-agregar el gasto al objeto del state
     gastos[`gasto${Date.now()}`] = gasto;
-    console.log(gastos);
 
+
+    //5-restar al presupuesto
+    this.restarPresupuesto(gasto.cantidadGasto);
 
     //3-ponerlo en el state, cuando se agrega algo al state es con el setState
     this.setState({
       gastos //la llave y la variable gastos se llaman igual...
+    })
+  }
+
+  //4-restar del presupuesto cuando un gasto se crea
+  restarPresupuesto = cantidad => {
+    //leer le gasto
+    //viene como string entonces se debe convertir a numero para realizar la resta
+    let restar = Number(cantidad);
+
+    //toma una copia del actual
+    let restante = this.state.restante;
+
+    //se resta
+    restante -= restar;
+    //aqui hay que converitlo a string de nuevo porque viene como numero para devolverlo al state
+    restante = String(restante);
+    //console.log(restante);
+
+    //se agrega al state
+    this.setState({
+      restante
     })
   }
   render() {
@@ -75,6 +113,11 @@ class App extends Component {
             <div className='one-half column'>
               <Listado
                 gastos={this.state.gastos}
+
+              />
+              <ControlPresupuesto
+                presupuesto={this.state.presupuesto}
+                restante={this.state.restante}
               />
             </div>
           </div>
